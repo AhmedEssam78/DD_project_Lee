@@ -5,8 +5,8 @@
 #include <sstream>
 #include <queue>
 #include <iomanip>
-
 using namespace std;
+
 
 //struct for obstacles & nets 
 struct obj {
