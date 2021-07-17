@@ -39,7 +39,7 @@ int wrong_cost;
 
 
 void init_file() {
-    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test1.txt");
+    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test3.txt");
     string line;
 
     if (!input_file.is_open())
@@ -137,7 +137,7 @@ void resizing() {
     } 
 }
 
-vector <vector <int>> numbering(obj source, obj target, int M, int initial)
+vector <vector <int>> lee(obj source, obj target, int M, int initial)
 {
     vector <vector <int>> matrix(x_grid);
     vector <vector <int>> visited(x_grid);
@@ -302,7 +302,6 @@ vector <obj> shortest_path(obj source, obj target, vector <vector <int>> matrix)
 
 }
 
-
 vector <bool> right_wrong(vector<obj> path_coordinates, int M) {
 
     vector <bool> check(path_coordinates.size(), false); //initialize eno kolo wrong
@@ -406,17 +405,80 @@ void comparing(vector<bool> bool_arr, vector<obj>& efficient_path) {
         }
     }
 }
-int main() {
-    init_file();
-    resizing();
-    vector <obj> path = shortest_path(nets[0][0], nets[0][1], numbering(nets[0][0], nets[0][1], nets[0][0].M, 0));
-    
-    vector <bool> boolean = right_wrong(path, nets[0][0].M);
+
+void test1(obj src, obj tar) {
+    vector <obj> path = shortest_path(src, tar, lee(src,tar, src.M, 0));
+    vector <bool> boolean = right_wrong(path, src.M);
     comparing(boolean, path);
+    cout << path[0].net_name << " : ";
+    for (int j = path.size() - 1; j >= 0; j--)
+        cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
+
+}
+
+void test2(obj src, obj tar) {
+
+    tar.M = src.M;
+    obj via;
+    vector <obj> path = shortest_path(src, tar, lee(src, tar, src.M, 0));
+    vector <bool> boolean = right_wrong(path, src.M);
+    comparing(boolean, path);
+    vector<obj>::iterator it;
+
+    if (boolean[boolean.size() - 1] == true) {
+
+        via = tar;
+        if (tar.M == 1) path[0].M = 2;
+        else if (tar.M == 2) path[0].M = 1;
+
+        it = path.begin() +1;
+        it = path.insert(it, via);
+    }
+    if (boolean[boolean.size() - 1] == false) {
+    
+        if (path[0].x == path[1].x && path[0].y == path[1].y) {
+
+            path.erase(path.begin());
+        }
+        else {
+            //via 3nd correct
+            //8aiar el M bta3et kol elly b3dha
+            int indx = 0;
+            for (int i = boolean.size() - 1; i >= 0; i--) {
+                if (boolean[i] == false) {
+                    indx++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            via = path[indx];
+            if (via.M == 1) via.M = 2;
+            else if (via.M == 2) via.M = 1;
+            for (int i = 0; i < indx; i++) {
+                if (path[i].M == 1) path[i].M = 2;
+                else if (path[i].M == 2) path[i].M = 1;
+            }
+
+            it = path.begin() + indx;
+            it = path.insert(it, via);
+
+        }
+
+    }
 
     cout << path[0].net_name << " : ";
     for (int j = path.size() - 1; j >= 0; j--)
         cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
+
+}
+
+int main() {
+    init_file();
+    resizing();
+    test2(nets[0][0], nets[0][1]);
 
   
     return 0;
