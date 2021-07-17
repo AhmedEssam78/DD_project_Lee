@@ -1,4 +1,5 @@
 #include <iostream> 
+#include <cmath>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -39,7 +40,7 @@ int wrong_cost;
 
 
 void init_file() {
-    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test3.txt");
+    ifstream input_file("C:/Users/user/Downloads/Final project/DD_project_Lee/test cases/test5.txt");
     string line;
 
     if (!input_file.is_open())
@@ -213,6 +214,7 @@ vector <vector <int>> lee(obj source, obj target, int M, int initial)
      }
 
      // Printing visited 
+     /*
      for (int i = 0; i < x_grid; i++)
      {
          for (int j = 0; j < y_grid; j++)
@@ -226,8 +228,11 @@ vector <vector <int>> lee(obj source, obj target, int M, int initial)
      }
 
      cout << endl;
+     */
+
 
      // Printing matrix
+     /*
      for (int i = 0; i < x_grid; i++)
      {
          for (int j = 0; j < y_grid; j++)
@@ -241,6 +246,7 @@ vector <vector <int>> lee(obj source, obj target, int M, int initial)
      }
 
      cout << endl;
+     */
 
      //Coppying the matrix into the suitable grid
      if (M == 1)
@@ -406,17 +412,15 @@ void comparing(vector<bool> bool_arr, vector<obj>& efficient_path) {
     }
 }
 
-void test1(obj src, obj tar) {
+vector <obj> test1(obj src, obj tar) {
     vector <obj> path = shortest_path(src, tar, lee(src,tar, src.M, 0));
     vector <bool> boolean = right_wrong(path, src.M);
     comparing(boolean, path);
-    cout << path[0].net_name << " : ";
-    for (int j = path.size() - 1; j >= 0; j--)
-        cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
+    return path;
 
 }
 
-void test2(obj src, obj tar) {
+vector <obj> test2(obj src, obj tar) {
 
     tar.M = src.M;
     obj via;
@@ -469,17 +473,82 @@ void test2(obj src, obj tar) {
 
     }
 
+    return path;
+
+}
+
+vector <obj> detect_case(obj src, obj tar) {
+    vector <obj> path;
+    if (src.M == tar.M)
+        path = test1(src, tar);
+    else
+        path = test2(src, tar);
+    return path;
+}
+
+vector <obj> reading_nets() {
+    int distance;
+    int idx;
+    int min = INT_MAX;
+    obj src = nets[0][0];
+    for (int j = 1; j < nets[0].size(); j++)
+    {
+        distance = pow((src.x - nets[0][j].x), 2) + pow((src.y - nets[0][j].y), 2);
+        if (distance < min)
+        {
+            min = distance;
+            idx = j;
+        }
+    }
+    obj tar = nets[0][idx];
+    vector <obj> path = detect_case(src, tar);
+
+    vector <obj>::iterator it;
+    it = nets[0].begin();
+    nets[0].erase(it + idx);
+    nets[0].erase(it);
+
+    int idx_src;
+    int idx_tar;
+    min = INT_MAX;
+
+    while (!nets[0].empty())
+    {
+        min = INT_MAX;
+        for (int a = 0; a < path.size(); a++)
+            for (int b = 0; b < nets[0].size(); b++)
+            {
+                distance = pow((path[a].x - nets[0][b].x), 2) + pow((path[a].y - nets[0][b].y), 2);
+                if (distance < min)
+                {
+                    min = distance;
+                    idx_src = a;
+                    idx_tar = b;
+                }
+            }
+        obj src = path[idx_src];
+        obj tar = nets[0][idx_tar];
+        vector <obj> cont = detect_case(src, tar);
+        cont.pop_back();
+        it = nets[0].begin();
+        nets[0].erase(it + idx_tar);
+        path.insert(path.begin(), cont.begin(), cont.end());
+    }
+
+    return path;
+}
+
+void printing(vector <obj> path) {
     cout << path[0].net_name << " : ";
     for (int j = path.size() - 1; j >= 0; j--)
         cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
-
 }
+
 
 int main() {
     init_file();
     resizing();
-    test2(nets[0][0], nets[0][1]);
+    printing(reading_nets());
 
-  
     return 0;
 }
