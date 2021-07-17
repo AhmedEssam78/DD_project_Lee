@@ -39,7 +39,7 @@ int wrong_cost;
 
 
 void init_file() {
-    ifstream input_file("C:/Users/user/Downloads/Final project/input.txt");
+    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test1.txt");
     string line;
 
     if (!input_file.is_open())
@@ -303,11 +303,116 @@ vector <obj> shortest_path(obj source, obj target, vector <vector <int>> matrix)
 }
 
 
+vector <bool> right_wrong(vector<obj> path_coordinates, int M) {
+
+    vector <bool> check(path_coordinates.size(), false); //initialize eno kolo wrong
+
+    check[0] = true;
+
+    int j = path_coordinates.size() - 1;
+
+    for (int i = 1; i < path_coordinates.size(); i++) {
+        if (M == 1) {
+
+            if (path_coordinates[j].x == path_coordinates[j - 1].x) {
+                check[i] = true;
+            }
+        }
+        else if (M == 2) {
+
+            if (path_coordinates[j].y == path_coordinates[j - 1].y) {
+                check[i] = true;
+            }
+        }
+
+        j--;
+
+    }
+
+    //Printing boolean array
+    /*
+    cout << endl;
+    for (int i = 0; i < check.size(); i++)
+        cout << check[i] << " ";
+    */
+    return check;
+}
+
+void comparing(vector<bool> bool_arr, vector<obj>& efficient_path) {
+
+    int wrong_num = 0;
+    int p1 = 1, p2 = 0;
+    int via_num = 0;
+
+    bool flag = false; //eno hit true
+
+    while (p2 != bool_arr.size() - 1 && p1 != bool_arr.size() - 1) {
+        if (bool_arr[p1] == true) {
+            p1++;
+            flag = false;
+        }
+        else if (bool_arr[p1] == false) {
+            p2 = p1;
+            flag = true;
+            while (bool_arr[p2 + 1] != true && p2 != bool_arr.size() - 2) { 
+                p2++;
+            }
+            if (p2 == bool_arr.size() - 2) 
+            {
+                if (bool_arr[p2 + 1] != true)
+                    p2++;
+            }
+        }
+
+        if (flag) {
+            wrong_num = p2 - p1 + 1;
+
+            if (2 * via_cost + wrong_num < wrong_cost * wrong_num) {
+
+                //cout << endl;
+                //cout << "path size before insertion: " << efficient_path.size() << endl;
+                //cout << p1 << endl;
+                //cout << p2 << endl;
+
+                for (int i = 0; i < wrong_num; i++) {
+                    if (efficient_path[efficient_path.size() - 1 - (p1 + via_num + i)].M == 1) efficient_path[efficient_path.size() - 1 - (p1 + via_num + i)].M = 2; // Edited
+                    else if (efficient_path[efficient_path.size() - 1 - (p1 + via_num + i)].M == 2) efficient_path[efficient_path.size() - 1 - (p1 + via_num + i)].M = 1; // Edited
+                }
+
+                //edit el nodes
+                obj via1 = efficient_path[efficient_path.size() - 1 - (p1 + via_num - 1)]; 
+                if (via1.M == 1) via1.M = 2; 
+                else if (via1.M == 2) via1.M = 1;
+                obj via2 = efficient_path[efficient_path.size() - 1 - (p2 + via_num)]; 
+                if (via2.M == 1) via2.M = 2;
+                else if (via2.M == 2) via2.M = 1;
+                //cout << "(" << via1.M << "," << via1.x << "," << via1.y << ")" << endl;
+                //cout << "(" << via2.M << "," << via2.x << "," << via2.y << ")" << endl;
+
+                vector<obj>::iterator it;
+                it = efficient_path.end() - (p1 + via_num); 
+                it = efficient_path.insert(it, via1);
+                it = efficient_path.end() - (p2 + via_num + 2); 
+                it = efficient_path.insert(it, via2);
+
+                via_num = via_num + 2;
+
+                //cout << "path size now: " << efficient_path.size() << endl;
+
+            }
+            p1 = p2 + 1;
+            flag = false;
+            wrong_num = 0;
+        }
+    }
+}
 int main() {
     init_file();
     resizing();
     vector <obj> path = shortest_path(nets[0][0], nets[0][1], numbering(nets[0][0], nets[0][1], nets[0][0].M, 0));
     
+    vector <bool> boolean = right_wrong(path, nets[0][0].M);
+    comparing(boolean, path);
 
     cout << path[0].net_name << " : ";
     for (int j = path.size() - 1; j >= 0; j--)

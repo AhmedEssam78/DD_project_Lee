@@ -2,3 +2,5 @@ C:\Users\user\Downloads\DD2_Project\DD2\Debug\DD2.exe
 C:\Users\user\Downloads\DD2_Project\DD2\Debug\DD2.pdb
 C:\Users\user\Downloads\Final project\Debug\DD2.exe
 C:\Users\user\Downloads\Final project\Debug\DD2.pdb
+C:\Users\Dell\Desktop\DD2_Final_pro\DD_project_Lee\Debug\DD2.exe
+C:\Users\Dell\Desktop\DD2_Final_pro\DD_project_Lee\Debug\DD2.pdb
