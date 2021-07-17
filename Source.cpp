@@ -544,7 +544,10 @@ void printing(vector <obj> path) {
         cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
 }
 
+void visualizing(vector<vector<obj>> grid) {
 
+
+}
 int main() {
     init_file();
     resizing();
