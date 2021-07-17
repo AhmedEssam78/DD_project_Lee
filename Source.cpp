@@ -40,7 +40,7 @@ int wrong_cost;
 
 
 void init_file() {
-    ifstream input_file("C:/Users/user/Downloads/Final project/DD_project_Lee/test cases/test5.txt");
+    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test5.txt");
     string line;
 
     if (!input_file.is_open())
