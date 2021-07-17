@@ -39,7 +39,7 @@ int wrong_cost;
 
 
 void init_file() {
-    ifstream input_file("C:/Users/user/Downloads/DD2_Project/DD2/input.txt");
+    ifstream input_file("C:/Users/user/Downloads/Final project/input.txt");
     string line;
 
     if (!input_file.is_open())
@@ -112,6 +112,8 @@ void init_file() {
     cin >> via_cost;
     cout << endl << "Please, Enter the cost of the Wrong Path: ";
     cin >> wrong_cost;
+
+    /*
     for (int i = 0; i < nets.size(); i++) {
         for (int j = 0; j < nets[i].size(); j++) {
             cout << "Net Name: " << nets[i][j].net_name << " X: " << nets[i][j].x << " y: " << nets[i][j].y << " Metal: " << nets[i][j].M << endl;
@@ -122,7 +124,7 @@ void init_file() {
     for (int i = 0; i < obstacles.size(); i++) {
         cout << "X: " << obstacles[i].x << " y: " << obstacles[i].y << endl;
     }
-
+    */
 }
 
 void resizing() {
@@ -291,17 +293,26 @@ vector <obj> shortest_path(obj source, obj target, vector <vector <int>> matrix)
 
 
     // Printing path
+    /*
      cout << source.net_name << " : ";
      for (int j = path.size() - 1; j >= 0; j--)
-            cout << "(" << path[j].x << " , " << path[j].y << ")" << "  ";
-
+            cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
+    */
      return path;
 
 }
+
 
 int main() {
     init_file();
     resizing();
     vector <obj> path = shortest_path(nets[0][0], nets[0][1], numbering(nets[0][0], nets[0][1], nets[0][0].M, 0));
+    
+
+    cout << path[0].net_name << " : ";
+    for (int j = path.size() - 1; j >= 0; j--)
+        cout << "(" << path[j].M << " , " << path[j].x << " , " << path[j].y << ")" << "  ";
+
+  
     return 0;
 }
