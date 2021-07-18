@@ -33,6 +33,7 @@ struct obj {
 vector <obj> obstacles(1);
 vector <obj> obs_visual;
 vector <vector<obj>> nets(1);
+vector <vector<obj>> nets_visual;
 vector <vector <obj>> final_path;
 vector <vector <int>> H_grid(1);
 vector <vector <int>> V_grid(1);
@@ -42,7 +43,7 @@ int wrong_cost;
 
 
 int init_file() {
-    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test8.txt");
+    ifstream input_file("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/test cases/test1.txt");
     string line;
 
     if (!input_file.is_open())
@@ -126,6 +127,7 @@ int init_file() {
     cin >> wrong_cost;
 
     obs_visual = obstacles;
+    nets_visual = nets;
     /*
     for (int i = 0; i < nets.size(); i++) {
         for (int j = 0; j < nets[i].size(); j++) {
@@ -776,9 +778,9 @@ vector <vector <obj>> reading_nets() {
                     break;
                 }
             path.insert(path.begin(), cont.begin(), cont.end());
-            final_path.push_back(path);
             obstacles.insert(obstacles.end(), path.begin(), path.end());
         }
+        final_path.push_back(path);
     }
     return final_path;
 }
@@ -786,67 +788,70 @@ vector <vector <obj>> reading_nets() {
 void visualizing(vector<vector<obj>> paths) {
 
     //empty cells
-    vector<vector<int>>out(y_grid);
-    for (int i = 0; i < y_grid; i++)
-        for (int j = 0; j < x_grid; j++)
-            out[i].push_back(0);
+    vector<vector<int>>out(x_grid);
+    for (int i = 0; i < x_grid; i++)
+        for (int j = 0; j < y_grid; j++)
+            out[i].push_back(-1);
 
 
     //nets
-    int counter = 3;
+    int counter = 12;
     for (int i = 0; i < paths.size(); i++) {
-        counter++;
+        counter = counter + 3;
         for (int j = 0; j < paths[i].size(); j++) {
-            out[i][j] = counter;
+            out[paths[i][j].x][paths[i][j].y] = counter;
         }
     }
 
-    ////intersections between nets
-    //for(int a = 0; a < paths.size(); a++){
-    //    for (int i = 0; i < paths[a].size(); i++) {
-    //        for (int j = a + 1; j < paths.size(); j++) {
-    //            for (int k = 0; k < paths[j].size(); k++) {
+        //src & tar cells
+    for (int i = 0; i < nets_visual.size(); i++) {
+        out[nets_visual[i][0].x][nets_visual[i][0].y] = 9;
+        for (int j = 1; j < nets_visual[i].size(); j++) {
+            out[nets_visual[i][j].x][nets_visual[i][j].y] = 12;
+        }
+    }
 
-    //                if (paths[a][i].x == paths[j][k].x && paths[a][i].y == paths[j][k].y) {
-
-    //                    out[paths[a][i].x][paths[a][i].y] = 3;
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //}
 
     //via cells
     for (int i = 0; i < paths.size(); i++) {
         for (int j = 1; j < paths[i].size(); j++) {
             if (paths[i][j - 1].x == paths[i][j].x && paths[i][j - 1].y == paths[i][j].y) {
-                out[paths[i][j - 1].x][paths[i][j - 1].y] = 2;
+                out[paths[i][j - 1].x][paths[i][j - 1].y] = 6;
             }
         }
     }
 
     //obstacles cells
     for (int i = 0; i < obs_visual.size(); i++) {
-        out[obs_visual[i].x][obs_visual[i].y] = 1;
+        out[obs_visual[i].x][obs_visual[i].y] = 3;
     }
 
-    cout << endl;
-    for (int i = 0; i < y_grid; i++) {
-        for (int j = 0; j < x_grid; j++) {
-            cout << out[i][j] << " ";
+
+    ofstream myfile;
+
+    myfile << endl;
+    myfile.open("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/python script/out.txt");
+    for (int i = 0; i < x_grid; i++) {
+        for (int j = 0; j < y_grid; j++) {
+            myfile << out[i][j] << " ";
         }
-        cout << endl;
+        myfile << endl;
     }
+    myfile.close();
 }
 void printing(vector <vector <obj>> path) {
+    
+    ofstream myfile;
+
+    myfile << endl;
+    myfile.open("C:/Users/Dell/Desktop/DD2_Final_pro/DD_project_Lee/final_path.txt");
 
     for (int i = 0; i < path.size(); i++) {
-        cout << endl << path[i][0].net_name << " : ";
+        myfile << endl << path[i][0].net_name << " : ";
         for (int j = path[i].size() - 1; j >= 0; j--)
-            cout << "(" << path[i][j].M << " , " << path[i][j].x << " , " << path[i][j].y << ")" << "  ";
-        cout << endl;
-        cout << endl;
+            myfile << "(" << path[i][j].M << " , " << path[i][j].x << " , " << path[i][j].y << ")" << "  ";
+        myfile << endl;
+        myfile << endl;
     }
 
 }
@@ -857,7 +862,7 @@ int main() {
         resizing();
         printing(reading_nets());
     }
-    //visualizing(final_path);
+   visualizing(final_path);
 
     return 0;
 }
