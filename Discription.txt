@@ -1,2 +1,0 @@
-The objective of this project is to develop a maze router using C++ & Python that implements Lee’s algorithm. The router connects pins that belong to the same net together using the available 
-routing resources. There are two routing layers (M1: horizontal and M2: Vertical) routing grid is up to 1000x1000 cells for each layer.
